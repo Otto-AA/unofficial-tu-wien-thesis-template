@@ -7,40 +7,29 @@ on:
 
 jobs:
   tests:
-    strategy:
-      matrix:
-        typst-version: ["0.13"]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Probe runner package cache
-        uses: awalsh128/cache-apt-pkgs-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          packages: cargo
-          version: 1.0
+          python-version: '3.12'
 
-      - name: Setup typst
-        uses: typst-community/setup-typst@v3
-        with:
-          typst-version: ${{ matrix.typst-version }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: Install tytanic from crates.io
-        uses: baptiste0928/cargo-install@v3.0.0
-        with:
-          crate: tytanic
-          version: '0.2.1'
+      - name: Check the layout against the official template's metrics
+        run: python tests/check_layout.py
 
-      - name: Run test suite
-        run: tt run --no-fail-fast
+      - name: Check the language arrangements and reference styles
+        run: python tests/check_variants.py
 
-      - name: Archive diffs
+      - name: Archive the built PDF
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: diffs
-          path: |
-            tests/**/diff/*.png
-            tests/**/out/*.png
+          name: thesis
+          path: build/thesis.pdf
           retention-days: 5

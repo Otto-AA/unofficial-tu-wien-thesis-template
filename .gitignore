@@ -1,3 +1,6 @@
-*.pdf
-# Vim files
-*.sw[op]
+# Build output (also staged template sources for local compilation)
+build/
+
+# Python virtual environment used by scripts/build.py
+.venv/
+__pycache__/

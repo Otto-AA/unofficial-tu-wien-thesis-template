@@ -15,7 +15,7 @@ jobs:
   build:
     strategy:
       matrix:
-        typst-version: ["0.13"]
+        typst-version: ["0.15"]
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
@@ -26,11 +26,16 @@ jobs:
         with:
           typst-version: ${{ matrix.typst-version }}
 
-      - name: Compile PDF
+      - name: Point the template's package imports at src/
+        # template/ imports the library through @preview, because that is what a project
+        # created with `typst init` gets. The checkout is compiled against src/ instead, so
+        # that the package need not be published first.
         run: |
-          sed -i 's/\@preview\/definitely-not-tuw-thesis:[0-9].[0-9].[0-9]/..\/src\/thesis.typ/' template/thesis.typ
-          sed -i 's/\@preview\/definitely-not-tuw-thesis:[0-9].[0-9].[0-9]/..\/..\/src\/thesis.typ/' template/content/main.typ
-          typst compile template/thesis.typ --root .
+          find template -name '*.typ' -print0 | xargs -0 sed -i \
+            's|@preview/definitely-not-tuw-thesis:[0-9]*\.[0-9]*\.[0-9]*|/src/lib.typ|'
+
+      - name: Compile PDF
+        run: typst compile template/thesis.typ --root . --font-path template/fonts
 
       - name: Copy File
         run: |

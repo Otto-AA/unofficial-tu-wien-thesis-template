@@ -1,7 +1,7 @@
 [package]
 name = "definitely-not-tuw-thesis"
-version = "0.2.0"
-entrypoint = "src/thesis.typ"
+version = "0.3.0"
+entrypoint = "src/lib.typ"
 authors = ["Othmar Lechner @Otto-AA"]
 license = "MIT-0"
 description = "An unofficial template for a thesis at the TU Wien informatics institute."
@@ -10,11 +10,14 @@ keywords = ["tuw", "tu wien"]
 categories = ["thesis"]
 exclude = [
 	".github",
+	"build",
 	"docs",
+	"example.pdf",
 	"scripts",
 	"tests",
 	".typstignore",
 	"Justfile",
+	"requirements.txt",
 ]
 
 [template]
